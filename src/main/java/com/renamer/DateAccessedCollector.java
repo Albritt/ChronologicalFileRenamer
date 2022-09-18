@@ -1,21 +1,19 @@
 package com.renamer;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-public class FileCollector {
+public class DateAccessedCollector implements Collector {
     private ArrayList<File> files;
     private Path path;
 
-    private FileCollector(){}
-    public FileCollector(Path path){
+    private DateAccessedCollector(){}
+    public DateAccessedCollector(Path path){
         this.path = path;
     }
 
+    @Override
     public ArrayList<File> collect() {
         return files;
     }
