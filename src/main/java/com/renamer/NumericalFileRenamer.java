@@ -1,21 +1,22 @@
 package com.renamer;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NumericalFileRenamer extends FileRenamer {
-    private List<File> files;
 
-    private NumericalFileRenamer() {
+    public NumericalFileRenamer(HashMap<Integer, List<File>> fullFilePath){
+       super(fullFilePath);
     }
 
-    public NumericalFileRenamer(List<File> files){
-        this.files = files;
-    }
 
     @Override
-    public void rename(){
-        return;
+    protected File createRenamedFile(File file, int fileNumber){
+        int indexOfExtension = file.getName().lastIndexOf(".");
+        String extensionName = file.getName().substring(indexOfExtension);
+        String directoryPathName = file.getParent().toString() + "/";
+        File renamedFile = new File(directoryPathName + fileNumber + extensionName);
+        return renamedFile;
     }
 }

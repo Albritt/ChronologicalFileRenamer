@@ -18,8 +18,8 @@ public class Application {
                 try{fileCollector.collectFiles(fileCollector.showPath(),0);}
                 catch (IOException e){e.printStackTrace();}
                 HashMap<Integer, List<File>> files = fileCollector.getFullFilePath();
-                //NumericalFileRenamer numericalRenamer = new NumericalFileRenamer(files);
-                //numericalRenamer.rename();
+                FileRenamer numericalRenamer = new NumericalFileRenamer(files);
+                numericalRenamer.rename();
             }
             else
                 System.out.println("Invalid directory provided");}

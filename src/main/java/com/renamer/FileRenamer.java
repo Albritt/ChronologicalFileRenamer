@@ -12,9 +12,23 @@ public abstract class FileRenamer {
     public void setFullFilePath(HashMap<Integer, List<File>> fullFilePath) {
         this.fullFilePath = fullFilePath;
     }
+    private int fileCounter = 0;
+    protected HashMap<Integer, List<File>> fullFilePath;
+    public FileRenamer(HashMap<Integer, List<File>> fullFilePath){
+        this.fullFilePath = fullFilePath;
+    }
 
-    private HashMap<Integer, List<File>> fullFilePath;
-    public FileRenamer(){}
+    protected void rename(){
+        fullFilePath.forEach((directory, files)->{
+            fileCounter = 0;
+            for(File file : files){
+                File renamedFile = createRenamedFile(file, fileCounter);
+                file.renameTo(renamedFile);
+                fileCounter++;
+            }
 
-    abstract void rename();
+        });
+    }
+
+    abstract File createRenamedFile(File file, int fileCounter);
 }

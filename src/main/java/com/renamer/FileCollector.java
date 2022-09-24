@@ -36,8 +36,6 @@ public abstract class FileCollector{
         if(directoryFiles.size() > 0){
             sortDirectoryFiles(directoryFiles);
             fullFilePath.put(fileTreeLevel,directoryFiles);
-            System.out.println(directoryFiles);
-
         }
     }
 
