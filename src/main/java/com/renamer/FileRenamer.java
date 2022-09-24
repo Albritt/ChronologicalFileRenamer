@@ -23,8 +23,14 @@ public abstract class FileRenamer {
             fileCounter = 0;
             for(File file : files){
                 File renamedFile = createRenamedFile(file, fileCounter);
-                file.renameTo(renamedFile);
-                fileCounter++;
+                if(file.renameTo(renamedFile)){
+                    fileCounter++;
+                    System.out.println("Renamed " + file.getName() + " to " + renamedFile.getName() + ".");
+                }
+                else{
+                    System.out.println("Failed to rename " + file.toString());
+                }
+
             }
 
         });

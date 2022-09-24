@@ -1,10 +1,7 @@
 package com.renamer;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class PrefixFileRenamer extends FileRenamer {
     private String prefix;
@@ -14,11 +11,11 @@ public class PrefixFileRenamer extends FileRenamer {
         super(fullFilePath);
         illegalCharacters = new String[]{"/","#","%","&","\\","{","}",",","<",">","*","?",
                 "$","!",":","@","+","`","|","=","'"};
+        this.prefix = requestPrefix();
     }
 
     @Override
     File createRenamedFile(File file, int fileNumber) {
-        this.prefix = requestPrefix();
         int indexOfExtension = file.getName().lastIndexOf(".");
         String extensionName = file.getName().substring(indexOfExtension);
         String directoryPathName = file.getParent().toString() + "/";
@@ -29,19 +26,20 @@ public class PrefixFileRenamer extends FileRenamer {
 
     private String requestPrefix(){
         boolean acceptedInput = false;
-        while (!acceptedInput){
+        String prefixInput = new String();
+        while (acceptedInput == false){
             System.out.println("Please input prefix to use");
             Scanner scanner = new Scanner(System.in);
-            String prefixInput = scanner.nextLine();
+            prefixInput = scanner.nextLine();
             for(String illegalChar : illegalCharacters){
                 if(prefixInput.contains(illegalChar)){
                     System.out.println("Invalid character " + illegalChar +
-                            ". Please input valid string without: " + illegalCharacters.toString());
+                            ". Please input valid string.");
                 }
             }
             acceptedInput = true;
         }
-        return prefix;
+        return prefixInput;
 
 
     }
