@@ -2,15 +2,16 @@ package com.renamer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-public class PrefixRenamer implements Renamer{
+public class PrefixFileRenamer extends FileRenamer {
     private String prefix;
-    private ArrayList<File> files;
+    private List<File> files;
 
-    private PrefixRenamer(){}
+    private PrefixFileRenamer(){}
 
-    public PrefixRenamer(ArrayList<File> files){
+    public PrefixFileRenamer(List<File> files){
         this.files = files;
     }
     @Override
