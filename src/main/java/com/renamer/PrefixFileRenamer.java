@@ -26,21 +26,37 @@ public class PrefixFileRenamer extends FileRenamer {
 
     private String requestPrefix(){
         boolean acceptedInput = false;
-        String prefixInput = new String();
+        String prefixInput = new String("");
+
         while (acceptedInput == false){
-            System.out.println("Please input prefix to use");
-            Scanner scanner = new Scanner(System.in);
-            prefixInput = scanner.nextLine();
-            for(String illegalChar : illegalCharacters){
-                if(prefixInput.contains(illegalChar)){
-                    System.out.println("Invalid character " + illegalChar +
-                            ". Please input valid string.");
-                }
+            prefixInput = promptUserInput();
+            if(containsBadInput(prefixInput) == false){
+                acceptedInput = true;
             }
-            acceptedInput = true;
         }
         return prefixInput;
+    }
 
+    private String promptUserInput (){
+        System.out.println("Please input prefix to use");
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
 
+    private boolean containsBadInput(String prefixInput){
+        boolean badInput = false;
+
+        for(String illegalChar : illegalCharacters){
+            if(prefixInput.contains(illegalChar)){
+                adviseBadInput(illegalChar);
+                badInput = true;
+            }
+        }
+        return badInput;
+    }
+
+    private void adviseBadInput (String badInput){
+        System.out.println("Invalid character " + badInput +
+                ".");
     }
 }
