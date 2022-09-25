@@ -3,18 +3,16 @@ package com.renamer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 public abstract class FileCollector{
     private HashMap<Integer, List<File>> fullFilePath;
     private Path directoryPath;
-    private int baseLevel;
     private int directoryCount;
 
     public FileCollector(Path directoryPath){
         this.directoryPath = directoryPath;
-        fullFilePath = new HashMap<Integer, List<File>>();
+        fullFilePath = new HashMap<>();
     }
 
     public File[] showPath() throws IOException{
@@ -22,7 +20,7 @@ public abstract class FileCollector{
     }
 
     public void collectFiles (File[] files, int fileTreeLevel) throws IOException{
-        ArrayList<File> directoryFiles =  new ArrayList<File>();
+        ArrayList<File> directoryFiles =  new ArrayList<>();
         for (File file: files){
             if(file.isFile()){
                 directoryFiles.add(file);

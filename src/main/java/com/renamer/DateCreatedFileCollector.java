@@ -26,7 +26,7 @@ public class DateCreatedFileCollector extends FileCollector{
                 }
             });
 
-            Collections.sort(directoryFiles);
+            Collections.sort(directoryFiles, creationTimeComparator);
         }
 
     }

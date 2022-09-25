@@ -28,7 +28,7 @@ public abstract class FileRenamer {
                     System.out.println("Renamed " + file.getName() + " to " + renamedFile.getName() + ".");
                 }
                 else{
-                    System.out.println("Failed to rename " + file.toString());
+                    System.out.println("Failed to rename " + file.getName());
                 }
 
             }
