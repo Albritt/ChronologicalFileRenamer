@@ -15,7 +15,7 @@ public class Application {
 
         try{Path path = Paths.get(args[0]);
             if(Files.isDirectory(path)){
-                FileCollector fileCollector = new DateCreatedFileCollector(path);
+                FileCollector fileCollector = new DateCreatedSortedFileCollector(path);
                 try
                 {
                     fileCollector.collectFromPath();

@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class DateCreatedFileCollector extends FileCollector{
-    public DateCreatedFileCollector(Path directoryPath){
+public class DateCreatedSortedFileCollector extends SortedFileCollector {
+    public DateCreatedSortedFileCollector(Path directoryPath){
         super(directoryPath);
     }
 
