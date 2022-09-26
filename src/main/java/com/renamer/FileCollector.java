@@ -10,16 +10,27 @@ public abstract class FileCollector{
     private Path directoryPath;
     private int directoryCount;
 
+    private int fileTreeBase = 0;
+
     public FileCollector(Path directoryPath){
         this.directoryPath = directoryPath;
         fullFilePath = new HashMap<>();
     }
 
-    public File[] showPath() throws IOException{
+    private File[] showPath() throws IOException{
         return directoryPath.toFile().listFiles();
     }
 
-    public void collectFiles (File[] files, int fileTreeLevel) throws IOException{
+    public void collectFromPath() throws IOException{
+        if(this.showPath() != null) {
+            collectFiles(this.showPath(),fileTreeBase);
+        }
+        else{
+            throw new RuntimeException("Directory is empty, no renaming can be done.");
+        }
+    }
+
+    private void collectFiles (File[] files, int fileTreeLevel) throws IOException{
         ArrayList<File> directoryFiles =  new ArrayList<>();
         for (File file: files){
             if(file.isFile()){
@@ -27,11 +38,14 @@ public abstract class FileCollector{
             }
             else if(file.isDirectory()){
                 directoryCount++;
-                collectFiles(file.listFiles(), directoryCount);
+                collectFiles(Objects.requireNonNull(file.listFiles()), directoryCount);
             }
         }
 
         if(directoryFiles.size() > 0){
+            for(File file :directoryFiles){
+                System.out.println(Files.getAttribute(file.toPath(),"creationTime").toString());
+            }
             sortDirectoryFiles(directoryFiles);
             fullFilePath.put(fileTreeLevel,directoryFiles);
         }

@@ -11,13 +11,14 @@ import java.util.List;
  */
 public class Application {
     public static void main(String[] args) {
+        //TODO: Create unsorted version of FileCollector, sorted version inherits from unsorted version
 
         try{Path path = Paths.get(args[0]);
             if(Files.isDirectory(path)){
                 FileCollector fileCollector = new DateCreatedFileCollector(path);
                 try
                 {
-                    fileCollector.collectFiles(fileCollector.showPath(),0);
+                    fileCollector.collectFromPath();
                 }
                 catch (IOException e)
                 {
