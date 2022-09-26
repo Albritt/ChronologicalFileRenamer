@@ -10,22 +10,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class LastModifiedCollectorSorted extends SortedFileCollector {
-    LastModifiedCollectorSorted(Path directoryPath){
+public class SizeSortedFileCollector extends SortedFileCollector {
+    public SizeSortedFileCollector(Path directoryPath){
         super(directoryPath);
     }
     @Override
     void sortDirectoryFiles(ArrayList<File> directoryFiles) {
-        Comparator<File> lastModifiedComparator = Comparator.comparing(file -> {
+        Comparator<File> sizeComparator = Comparator.comparing(file -> {
             try{
-                return Files.readAttributes(Paths.get(file.toURI()), BasicFileAttributes.class).lastModifiedTime();
+                return Files.readAttributes(Paths.get(file.toURI()), BasicFileAttributes.class).size();
             }catch(IOException ex){
                 ex.printStackTrace();
                 return null;
             }
         });
 
-        Collections.sort(directoryFiles, lastModifiedComparator);
+        Collections.sort(directoryFiles, sizeComparator);
 
     }
 }
