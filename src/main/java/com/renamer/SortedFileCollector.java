@@ -13,7 +13,7 @@ public abstract class SortedFileCollector extends UnsortedFileCollector implemen
     }
 
     @Override
-    public void collectFiles(File[] files, int fileTreeLevel) throws IOException {
+    protected void collectFiles(File[] files, int fileTreeLevel) throws IOException {
         ArrayList<File> directoryFiles = new ArrayList<>();
         for (File file : files) {
             if (file.isFile()) {

@@ -27,17 +27,17 @@ public class UnsortedFileCollector implements FileCollector {
 
     @Override
     public void collectFromPath() throws IOException {
-        if(this.showPath() != null) {
-            collectFiles(this.showPath(),fileTreeBase);
+        if(this.showPath() == null) {
+            throw new RuntimeException(directoryPath.toString() +
+                " is empty or not a directory, no renaming can be done.");
         }
         else{
-            throw new RuntimeException("Directory is empty, no renaming can be done.");
+            collectFiles(this.showPath(),fileTreeBase);
         }
     }
 
 
-    @Override
-    public void collectFiles(File[] files, int fileTreeLevel) throws IOException {
+    protected void collectFiles(File[] files, int fileTreeLevel) throws IOException {
         ArrayList<File> directoryFiles = new ArrayList<>();
         for (File file : files) {
             if (file.isFile()) {

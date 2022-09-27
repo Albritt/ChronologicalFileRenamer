@@ -40,11 +40,21 @@ public class UnsortedFileCollectorTests {
     }
 
     @Test
+    public void collectFromPathShouldNotCollectFromGivenNonDirectory(@TempDir Path file) throws IOException{
+        Path fileAsPath = Files.createFile(file.resolve("test.txt"));
+        UnsortedFileCollector unsortedFileCollector = new UnsortedFileCollector(fileAsPath);
+        assertThrows(RuntimeException.class, ()-> unsortedFileCollector.collectFromPath(),
+                unsortedFileCollector.getDirectory().toString() +
+                        " is empty or not a directory, no renaming can be done.");
+    }
+
+    @Test
     public void collectFromPathShouldNotCollectEmptyDirectories(@TempDir Path emptyDir) throws IOException {
         Path emptyDirectory = emptyDir.resolve("emptyDir");
         UnsortedFileCollector unsortedFileCollector = new UnsortedFileCollector(emptyDirectory);
         assertThrows(RuntimeException.class, ()-> unsortedFileCollector.collectFromPath(),
-                "Directory is empty, no renaming can be done.");
+                unsortedFileCollector.getDirectory().toString() +
+                        " is empty or not a directory, no renaming can be done.");
 
     }
 
