@@ -19,9 +19,7 @@ public class FileRenamerApplication extends Application {
     public static void main(String[] args) {
         launch(args);
 
-        //TODO: Create unsorted version of FileCollector, sorted version inherits from unsorted version
-
-        try {
+        /*try {
             Path path = Paths.get(args[0]);
             if (Files.isDirectory(path)) {
                 FileCollector fileCollector = new DateCreatedSortedFileCollector(path);
@@ -31,14 +29,14 @@ public class FileRenamerApplication extends Application {
                     e.printStackTrace();
                 }
 
-                HashMap<Integer, List<File>> files = fileCollector.getFullFilePath();
-                FileRenamer fileRenamer = new PrefixFileRenamer(files);
+
+                FileRenamer fileRenamer = new PrefixFileRenamer(fileCollector.getFullFilePath());
                 fileRenamer.rename();
             } else
                 System.out.println("Invalid directory provided");
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new RuntimeException("Please input a valid path.");
-        }
+        }*/
 
 
     }
@@ -51,7 +49,7 @@ public class FileRenamerApplication extends Application {
 
         stage.setScene(scene);
         stage.setTitle("File Renamer");
-        stage.setAlwaysOnTop(true);
+        stage.setAlwaysOnTop(false);
         stage.setResizable(false);
         stage.show();
 

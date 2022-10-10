@@ -1,21 +1,25 @@
 package com.renamer.Controllers;
 
-import com.renamer.FileCollector;
+import com.renamer.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 public class MainUIController implements Initializable {
     private FileCollector fileCollector;
+    private FileRenamer fileRenamer;
+    private Path selectedDirectory;
+
 
     @FXML
     private Button clearButton;
@@ -24,13 +28,20 @@ public class MainUIController implements Initializable {
     private Button closeButton;
 
     @FXML
-    private TextArea listFilesTextArea;
+    private GridPane numericalRenameOptionsGridPane;
 
     @FXML
     private Button openButton;
 
     @FXML
-    private GridPane optionsGridPane;
+    private TextArea outputTextArea;
+
+    @FXML
+    private TextField prefixText;
+
+
+    @FXML
+    private TextField pathTextField;
 
     @FXML
     private ComboBox<String> renamingStyleComboBox;
@@ -41,7 +52,11 @@ public class MainUIController implements Initializable {
     @FXML
     private ComboBox<String> sortingTypeComboBox;
 
-    public boolean areSelectionsEmptyOnRun(ComboBox<String> sortingTypeComboBox, ComboBox<String> renamingStyleComboBox){
+    @FXML
+    private TextField startingNumber;
+
+
+    public boolean selectionsEmptyOnRun(ComboBox<String> sortingTypeComboBox, ComboBox<String> renamingStyleComboBox){
         boolean isSortingTypeEmpty = sortingTypeComboBox.getSelectionModel().isEmpty();
         boolean isRenamingStyleEmpty = renamingStyleComboBox.getSelectionModel().isEmpty();
         if(isSortingTypeEmpty == true){
@@ -53,36 +68,85 @@ public class MainUIController implements Initializable {
         else
             return false;
     }
+    public void initializeClearButton(){
+        clearButton.setOnAction(actionEvent ->{
+            outputTextArea.clear();
+            pathTextField.clear();
+                });
+
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        sortingTypeComboBox.getItems().addAll("Unsorted", "Date Created", "Last Modified", "File Size");
-        renamingStyleComboBox.getItems().addAll("Numerical");
-        closeButton.setOnAction(actionEvent -> Platform.exit());
+        initializeSortingTypeComboBox(sortingTypeComboBox);
+        initializeRenamingStyleComboBox(renamingStyleComboBox);
+        initializeClearButton();
+        initializeCloseButton();
+        initializeOpenButton();
+        initializeRunButton();
+    }
+
+    private void initializeRunButton() {
+        runButton.setOnAction(actionEvent -> {
+            if(selectionsEmptyOnRun(sortingTypeComboBox,renamingStyleComboBox) == false){
+                switch(sortingTypeComboBox.getSelectionModel().getSelectedItem()) {
+                    case "Unsorted":
+                        fileCollector = new UnsortedFileCollector(selectedDirectory);
+                        break;
+                    case "Last Modified":
+                        fileCollector = new LastModifiedSortedFileCollector(selectedDirectory);
+                        break;
+                    case "Date Created":
+                        fileCollector = new DateCreatedSortedFileCollector(selectedDirectory);
+                        break;
+                    case "File Size":
+                        fileCollector = new SizeSortedFileCollector(selectedDirectory);
+                        break;
+                    default:
+                        Alert badCaseAlert = new Alert(Alert.AlertType.ERROR);
+                        badCaseAlert.setContentText("Case provided does not exist. Check Sorting Type");
+                        badCaseAlert.show();
+                        throw new UnsupportedOperationException("Case provided does not exist");
+                }
+                if (Files.isDirectory(selectedDirectory)) {
+                    try {
+                        fileCollector.collectFromPath();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(prefixText != null) {
+                    fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath());
+                    fileRenamer.rename();
+                    outputTextArea.appendText(fileRenamer.getOutputText());
+                } else
+                    outputTextArea.appendText("Invalid directory provided");
+            }
+            }
+            });
+    }
+
+    private void initializeOpenButton() {
         openButton.setOnAction(actionEvent -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choose Directory");
-            File selectedDirectory = directoryChooser.showDialog(openButton.getScene().getWindow());
+            selectedDirectory = directoryChooser.showDialog(openButton.getScene().getWindow()).toPath();
+            if(selectedDirectory != null)
+                pathTextField.setText(selectedDirectory.toString());
         });
-        clearButton.setOnAction(actionEvent ->
-                listFilesTextArea.clear());
-        runButton.setOnAction(actionEvent -> {
-            if(areSelectionsEmptyOnRun(sortingTypeComboBox,renamingStyleComboBox) == false){
-                if(sortingTypeComboBox.getSelectionModel().getSelectedItem() == "Unsorted"){
 
-                }
-            }
-            });
+    }
 
-        /*sortingTypeComboBox.setOnAction((actionEvent -> {
-            String selectedItem = sortingTypeComboBox.getSelectionModel().getSelectedItem();
-            if(selectedItem == "Unsorted"){
-                renamingStyleComboBox.setVisible(false);
-                renamingStyleComboBox.setValue("");
-            }
-            else{
-                renamingStyleComboBox.setVisible(true);
-            }
-        }));*/
+    private void initializeRenamingStyleComboBox(ComboBox<String> renamingStyleComboBox) {
+        renamingStyleComboBox.getItems().addAll("Numerical");
+        renamingStyleComboBox.setValue("Numerical");
+    }
+
+    private void initializeSortingTypeComboBox(ComboBox<String> sortingTypeComboBox) {
+        sortingTypeComboBox.getItems().addAll("Unsorted", "Date Created", "Last Modified", "File Size");
+        sortingTypeComboBox.setValue("Unsorted");
+    }
+
+    private void initializeCloseButton() {
+        closeButton.setOnAction(actionEvent -> Platform.exit());
     }
 }

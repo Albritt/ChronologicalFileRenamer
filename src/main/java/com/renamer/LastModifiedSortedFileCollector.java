@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class LastModifiedSortedFileCollector extends SortedFileCollector {
-    LastModifiedSortedFileCollector(Path directoryPath){
+    public LastModifiedSortedFileCollector(Path directoryPath){
         super(directoryPath);
     }
     @Override
