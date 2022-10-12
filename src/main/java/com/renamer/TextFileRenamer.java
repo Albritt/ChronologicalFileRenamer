@@ -3,28 +3,27 @@ package com.renamer;
 import java.io.File;
 import java.util.*;
 
-public class PrefixFileRenamer extends FileRenamer {
-    private String prefix;
+public class TextFileRenamer extends FileRenamer {
+    private final String prefix;
     private String[] illegalCharacters;
 
-    public PrefixFileRenamer(HashMap<Integer,List<File>> fullFilePath){
-        super(fullFilePath);
-        illegalCharacters = new String[]{"/","#","%","&","\\","{","}",",","<",">","*","?",
-                "$","!",":","@","+","`","|","=","'"};
-        this.prefix = requestPrefix();
+    public TextFileRenamer(HashMap<Integer,List<File>> fullFilePath, int startingNumber, String prefix){
+        super(fullFilePath,startingNumber);
+        //illegalCharacters = new String[]{"/","#","%","&","\\","{","}",",","<",">","*","?",
+           //     "$","!",":","@","+","`","|","=","'"};
+        this.prefix = prefix;
     }
 
     @Override
-    File createRenamedFile(File file, int fileNumber) {
+    protected File createRenamedFile(File file, int fileNumber) {
         int indexOfExtension = file.getName().lastIndexOf(".");
         String extensionName = file.getName().substring(indexOfExtension);
-        String directoryPathName = file.getParent().toString() + "/";
-        File renamedFile = new File(directoryPathName + prefix + fileNumber + extensionName);
-        return renamedFile;
+        String directoryPathName = file.getParent() + "/";
+        return new File(directoryPathName + prefix + fileNumber + extensionName);
 
     }
 
-    private String requestPrefix(){
+    /*private String requestPrefix(){
         boolean acceptedInput = false;
         String prefixInput = new String("");
 
@@ -35,28 +34,29 @@ public class PrefixFileRenamer extends FileRenamer {
             }
         }
         return prefixInput;
-    }
+    }*/
 
-    private String promptUserInput (){
+    /*private String promptUserInput (){
         System.out.println("Please input prefix to use");
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
-    }
+    }*/
 
-    private boolean containsBadInput(String prefixInput){
+    /*private boolean containsBadInput(String prefixInput){
         boolean badInput = false;
 
         for(String illegalChar : illegalCharacters){
             if(prefixInput.contains(illegalChar)){
-                adviseBadInput(illegalChar);
+                //adviseBadInput(illegalChar);
                 badInput = true;
+                // throw new RuntimeException("Illegal character provided: " + illegalChar);
             }
         }
         return badInput;
-    }
+    }*/
 
-    private void adviseBadInput (String badInput){
+    /*private void adviseBadInput (String badInput){
         System.out.println("Invalid character " + badInput +
                 ".");
-    }
+    }*/
 }

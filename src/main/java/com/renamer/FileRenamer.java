@@ -5,21 +5,25 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class FileRenamer {
-    public HashMap<Integer, List<File>> getFullFilePath() {
-        return fullFilePath;
-    }
+    private int subDirectoryFileCounter = 0;
+    private int totalFileCount = 0;
 
-    public void setFullFilePath(HashMap<Integer, List<File>> fullFilePath) {
+    private final int startingNumber;
+
+
+    private String outputText;
+    protected HashMap<Integer, List<File>> fullFilePath;
+    public FileRenamer(HashMap<Integer, List<File>> fullFilePath, int startingNumber){
         this.fullFilePath = fullFilePath;
-    }
-    private int fileCounter = 0;
-
-    public int getFileCounter() {
-        return fileCounter;
+        this.startingNumber = startingNumber;
     }
 
-    public void setFileCounter(int fileCounter) {
-        this.fileCounter = fileCounter;
+    public int getSubDirectoryFileCounter() {
+        return subDirectoryFileCounter;
+    }
+
+    public void setSubDirectoryFileCounter(int subDirectoryFileCounter) {
+        this.subDirectoryFileCounter = subDirectoryFileCounter;
     }
 
     public String getOutputText() {
@@ -29,21 +33,21 @@ public abstract class FileRenamer {
     public void setOutputText(String outputText) {
         this.outputText = outputText;
     }
-
-    private String outputText;
-    protected HashMap<Integer, List<File>> fullFilePath;
-    public FileRenamer(HashMap<Integer, List<File>> fullFilePath){
+    public HashMap<Integer, List<File>> getFullFilePath() {
+        return fullFilePath;
+    }
+    public void setFullFilePath(HashMap<Integer, List<File>> fullFilePath) {
         this.fullFilePath = fullFilePath;
     }
 
     public void rename(){
         StringBuilder sb = new StringBuilder();
         fullFilePath.forEach((directory, files)->{
-            fileCounter = 0;
+            subDirectoryFileCounter = startingNumber;
             for(File file : files){
-                File renamedFile = createRenamedFile(file, fileCounter);
+                File renamedFile = createRenamedFile(file, subDirectoryFileCounter);
                 if(file.renameTo(renamedFile)){
-                    fileCounter++;
+                    subDirectoryFileCounter++;
                     sb.append("Renamed " + file.getName() + " to " + renamedFile.getName() + "." );
                     sb.append("\n");
                 }
@@ -51,15 +55,14 @@ public abstract class FileRenamer {
                     sb.append("Failed to rename " + file.getName());
                     sb.append("\n");
                 }
-
             }
-            sb.append("Renamed " + fileCounter + " files");
-            sb.append("\n");
-            outputText = sb.toString();
-            System.out.println(sb);
-
+            //TODO: Fix error in file counter due to starting number
+            totalFileCount = subDirectoryFileCounter + totalFileCount;
         });
+        sb.append("Renamed " + totalFileCount + " files");
+        sb.append("\n");
+        outputText = sb.toString();
     }
 
-    abstract File createRenamedFile(File file, int fileCounter);
+    protected abstract File createRenamedFile(File file, int fileCounter);
 }

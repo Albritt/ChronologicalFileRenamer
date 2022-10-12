@@ -88,41 +88,53 @@ public class MainUIController implements Initializable {
 
     private void initializeRunButton() {
         runButton.setOnAction(actionEvent -> {
-            if(selectionsEmptyOnRun(sortingTypeComboBox,renamingStyleComboBox) == false){
-                switch(sortingTypeComboBox.getSelectionModel().getSelectedItem()) {
-                    case "Unsorted":
-                        fileCollector = new UnsortedFileCollector(selectedDirectory);
-                        break;
-                    case "Last Modified":
-                        fileCollector = new LastModifiedSortedFileCollector(selectedDirectory);
-                        break;
-                    case "Date Created":
-                        fileCollector = new DateCreatedSortedFileCollector(selectedDirectory);
-                        break;
-                    case "File Size":
-                        fileCollector = new SizeSortedFileCollector(selectedDirectory);
-                        break;
-                    default:
-                        Alert badCaseAlert = new Alert(Alert.AlertType.ERROR);
-                        badCaseAlert.setContentText("Case provided does not exist. Check Sorting Type");
-                        badCaseAlert.show();
-                        throw new UnsupportedOperationException("Case provided does not exist");
-                }
+            if(!selectionsEmptyOnRun(sortingTypeComboBox, renamingStyleComboBox)){
+                selectSortingStyle();
                 if (Files.isDirectory(selectedDirectory)) {
                     try {
                         fileCollector.collectFromPath();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if(prefixText != null) {
-                    fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath());
+                    chooseRenamerStyle();
                     fileRenamer.rename();
                     outputTextArea.appendText(fileRenamer.getOutputText());
-                } else
-                    outputTextArea.appendText("Invalid directory provided");
+                }
+                else{
+                    outputTextArea.appendText("Invalid directory provided '\n'");
+                }
             }
-            }
-            });
+        });
+    }
+
+    private void chooseRenamerStyle() {
+        if(prefixText.getText() == null)
+            fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath(), Integer.parseInt(startingNumber.getText()));
+        else
+            fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
+                    Integer.parseInt(startingNumber.getText()),prefixText.getText());;
+    }
+
+    private void selectSortingStyle() {
+        switch(sortingTypeComboBox.getSelectionModel().getSelectedItem()) {
+            case "Unsorted":
+                fileCollector = new UnsortedFileCollector(selectedDirectory);
+                break;
+            case "Last Modified":
+                fileCollector = new LastModifiedSortedFileCollector(selectedDirectory);
+                break;
+            case "Date Created":
+                fileCollector = new DateCreatedSortedFileCollector(selectedDirectory);
+                break;
+            case "File Size":
+                fileCollector = new SizeSortedFileCollector(selectedDirectory);
+                break;
+            default:
+                Alert badCaseAlert = new Alert(Alert.AlertType.ERROR);
+                badCaseAlert.setContentText("Case provided does not exist. Check Sorting Type");
+                badCaseAlert.show();
+                throw new UnsupportedOperationException("Case provided does not exist");
+        }
     }
 
     private void initializeOpenButton() {
