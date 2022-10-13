@@ -112,28 +112,21 @@ public class MainUIController implements Initializable {
             fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath(), Integer.parseInt(startingNumber.getText()));
         else
             fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
-                    Integer.parseInt(startingNumber.getText()),prefixText.getText());;
+                    Integer.parseInt(startingNumber.getText()),prefixText.getText());
     }
 
     private void selectSortingStyle() {
-        switch(sortingTypeComboBox.getSelectionModel().getSelectedItem()) {
-            case "Unsorted":
-                fileCollector = new UnsortedFileCollector(selectedDirectory);
-                break;
-            case "Last Modified":
-                fileCollector = new LastModifiedSortedFileCollector(selectedDirectory);
-                break;
-            case "Date Created":
-                fileCollector = new DateCreatedSortedFileCollector(selectedDirectory);
-                break;
-            case "File Size":
-                fileCollector = new SizeSortedFileCollector(selectedDirectory);
-                break;
-            default:
+        switch (sortingTypeComboBox.getSelectionModel().getSelectedItem()) {
+            case "Unsorted" -> fileCollector = new UnsortedFileCollector(selectedDirectory);
+            case "Last Modified" -> fileCollector = new LastModifiedSortedFileCollector(selectedDirectory);
+            case "Date Created" -> fileCollector = new DateCreatedSortedFileCollector(selectedDirectory);
+            case "File Size" -> fileCollector = new SizeSortedFileCollector(selectedDirectory);
+            default -> {
                 Alert badCaseAlert = new Alert(Alert.AlertType.ERROR);
                 badCaseAlert.setContentText("Case provided does not exist. Check Sorting Type");
                 badCaseAlert.show();
                 throw new UnsupportedOperationException("Case provided does not exist");
+            }
         }
     }
 

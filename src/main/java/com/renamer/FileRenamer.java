@@ -46,18 +46,21 @@ public abstract class FileRenamer {
             subDirectoryFileCounter = startingNumber;
             for(File file : files){
                 File renamedFile = createRenamedFile(file, subDirectoryFileCounter);
-                if(file.renameTo(renamedFile)){
-                    subDirectoryFileCounter++;
-                    sb.append("Renamed " + file.getName() + " to " + renamedFile.getName() + "." );
-                    sb.append("\n");
+                if(renamedFile.exists()){
+                    sb.append("File " + renamedFile + " already exists. Skipping to avoid overwrite");
                 }
-                else{
-                    sb.append("Failed to rename " + file.getName());
-                    sb.append("\n");
+                else {
+                    if(file.renameTo(renamedFile)){
+                        subDirectoryFileCounter++;
+                        sb.append("Renamed " + file.getName() + " to " + renamedFile.getName() + "." );
+                    }
+                    else{
+                        sb.append("Failed to rename " + file.getName());
+                    }
                 }
+                sb.append("\n");
             }
-            //TODO: Fix error in file counter due to starting number
-            totalFileCount = subDirectoryFileCounter + totalFileCount;
+            totalFileCount = (subDirectoryFileCounter - startingNumber) + totalFileCount;
         });
         sb.append("Renamed " + totalFileCount + " files");
         sb.append("\n");
