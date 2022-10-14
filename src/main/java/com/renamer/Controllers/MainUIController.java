@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -53,16 +52,17 @@ public class MainUIController implements Initializable {
     private ComboBox<String> sortingTypeComboBox;
 
     @FXML
-    private TextField startingNumber;
+    private TextField startingNumberTextField;
 
 
     public boolean selectionsEmptyOnRun(ComboBox<String> sortingTypeComboBox, ComboBox<String> renamingStyleComboBox){
+        //TODO: Make this more general should only take one combobox and check if it has a value
         boolean isSortingTypeEmpty = sortingTypeComboBox.getSelectionModel().isEmpty();
         boolean isRenamingStyleEmpty = renamingStyleComboBox.getSelectionModel().isEmpty();
-        if(isSortingTypeEmpty == true){
+        if(isSortingTypeEmpty){
             return true;
         }
-        if(isRenamingStyleEmpty == true){
+        if(isRenamingStyleEmpty){
             return true;
         }
         else
@@ -87,6 +87,7 @@ public class MainUIController implements Initializable {
     }
 
     private void initializeRunButton() {
+        //TODO: Make similar function to check if directory is empty, or make run button unclickable until directory is available
         runButton.setOnAction(actionEvent -> {
             if(!selectionsEmptyOnRun(sortingTypeComboBox, renamingStyleComboBox)){
                 selectSortingStyle();
@@ -96,9 +97,11 @@ public class MainUIController implements Initializable {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    chooseRenamerStyle();
-                    fileRenamer.rename();
-                    outputTextArea.appendText(fileRenamer.getOutputText());
+                    if(chooseRenamerStyle()){
+                        //TODO:Re-implement invalid characters for UI in TextFileRenamer
+                        fileRenamer.rename();
+                        outputTextArea.appendText(fileRenamer.getOutputText());
+                    }
                 }
                 else{
                     outputTextArea.appendText("Invalid directory provided '\n'");
@@ -107,12 +110,20 @@ public class MainUIController implements Initializable {
         });
     }
 
-    private void chooseRenamerStyle() {
-        if(prefixText.getText() == null)
-            fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath(), Integer.parseInt(startingNumber.getText()));
-        else
-            fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
-                    Integer.parseInt(startingNumber.getText()),prefixText.getText());
+    private boolean chooseRenamerStyle() {
+        try{
+            int startingNumber = Integer.parseInt(startingNumberTextField.getText());
+            if(prefixText.getText() == null)
+                fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath(), startingNumber);
+            else
+                fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
+                        startingNumber,prefixText.getText());
+            return true;
+        }catch(NumberFormatException numberFormatException){
+            showErrorAlert("Integer not provided for 'Start With' field");
+            return false;
+        }
+
     }
 
     private void selectSortingStyle() {
@@ -122,12 +133,16 @@ public class MainUIController implements Initializable {
             case "Date Created" -> fileCollector = new DateCreatedSortedFileCollector(selectedDirectory);
             case "File Size" -> fileCollector = new SizeSortedFileCollector(selectedDirectory);
             default -> {
-                Alert badCaseAlert = new Alert(Alert.AlertType.ERROR);
-                badCaseAlert.setContentText("Case provided does not exist. Check Sorting Type");
-                badCaseAlert.show();
+                showErrorAlert("Case provided does not exist. Check Sorting Type");
                 throw new UnsupportedOperationException("Case provided does not exist");
             }
         }
+    }
+
+    private void showErrorAlert(String message) {
+        Alert badCaseAlert = new Alert(Alert.AlertType.ERROR);
+        badCaseAlert.setContentText(message);
+        badCaseAlert.show();
     }
 
     private void initializeOpenButton() {
@@ -135,8 +150,7 @@ public class MainUIController implements Initializable {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choose Directory");
             selectedDirectory = directoryChooser.showDialog(openButton.getScene().getWindow()).toPath();
-            if(selectedDirectory != null)
-                pathTextField.setText(selectedDirectory.toString());
+            pathTextField.setText(selectedDirectory.toString());
         });
 
     }

@@ -92,7 +92,7 @@
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Start With" />
-                        <TextField fx:id="startingNumber" prefWidth="162.0" text="1" />
+                        <TextField fx:id="startingNumberTextField" prefWidth="162.0" text="1" />
                      </children>
                      <opaqueInsets>
                         <Insets />
