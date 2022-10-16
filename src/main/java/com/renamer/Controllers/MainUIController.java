@@ -95,7 +95,7 @@ public class MainUIController implements Initializable {
                     outputTextArea.appendText(fileRenamer.getOutputText());
                 }
             }else
-                outputTextArea.appendText("Please ensure a sorting and renaming style are selected.");
+                showErrorAlert("Please ensure a sorting and renaming style are selected.");
         });
     }
 
@@ -109,7 +109,7 @@ public class MainUIController implements Initializable {
                     fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
                             startingNumber,prefixText.getText());
                 }catch(IllegalArgumentException illegalArgumentException){
-                    outputTextArea.appendText("Bad input given, please check prefix field \n");
+                    showErrorAlert("Bad input given, please check text pattern for renaming");
                     return false;
                 }
             }
