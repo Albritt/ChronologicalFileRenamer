@@ -5,13 +5,29 @@ import java.util.*;
 
 public class TextFileRenamer extends FileRenamer {
     private final String prefix;
-    private String[] illegalCharacters;
+    private final String[] illegalCharacters;
 
     public TextFileRenamer(HashMap<Integer,List<File>> fullFilePath, int startingNumber, String prefix){
         super(fullFilePath,startingNumber);
-        //illegalCharacters = new String[]{"/","#","%","&","\\","{","}",",","<",">","*","?",
-           //     "$","!",":","@","+","`","|","=","'"};
-        this.prefix = prefix;
+        illegalCharacters = new String[]{"/","#","%","&","\\","{","}",",","<",">","*","?",
+                "$","!",":","@","+","`","|","=","'"};
+        if(containsIllegalChars(prefix)){
+            throw new IllegalArgumentException("Invalid character provided in TextFileRenamer constructor");
+        }
+        else
+            this.prefix = prefix;
+    }
+
+    private boolean containsIllegalChars(String appendText) {
+        boolean illegalCharFound = false;
+
+        for(String illegalChar : illegalCharacters) {
+            if (appendText.contains(illegalChar)) {
+                illegalCharFound = true;
+                break;
+            }
+        }
+        return illegalCharFound;
     }
 
     @Override
@@ -22,41 +38,4 @@ public class TextFileRenamer extends FileRenamer {
         return new File(directoryPathName + prefix + fileNumber + extensionName);
 
     }
-
-    /*private String requestPrefix(){
-        boolean acceptedInput = false;
-        String prefixInput = new String("");
-
-        while (acceptedInput == false){
-            prefixInput = promptUserInput();
-            if(containsBadInput(prefixInput) == false){
-                acceptedInput = true;
-            }
-        }
-        return prefixInput;
-    }*/
-
-    /*private String promptUserInput (){
-        System.out.println("Please input prefix to use");
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }*/
-
-    /*private boolean containsBadInput(String prefixInput){
-        boolean badInput = false;
-
-        for(String illegalChar : illegalCharacters){
-            if(prefixInput.contains(illegalChar)){
-                //adviseBadInput(illegalChar);
-                badInput = true;
-                // throw new RuntimeException("Illegal character provided: " + illegalChar);
-            }
-        }
-        return badInput;
-    }*/
-
-    /*private void adviseBadInput (String badInput){
-        System.out.println("Invalid character " + badInput +
-                ".");
-    }*/
 }

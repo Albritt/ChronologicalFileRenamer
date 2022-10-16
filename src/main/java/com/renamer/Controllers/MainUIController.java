@@ -8,9 +8,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
@@ -55,23 +55,18 @@ public class MainUIController implements Initializable {
     private TextField startingNumberTextField;
 
 
-    public boolean selectionsEmptyOnRun(ComboBox<String> sortingTypeComboBox, ComboBox<String> renamingStyleComboBox){
-        //TODO: Make this more general should only take one combobox and check if it has a value
-        boolean isSortingTypeEmpty = sortingTypeComboBox.getSelectionModel().isEmpty();
-        boolean isRenamingStyleEmpty = renamingStyleComboBox.getSelectionModel().isEmpty();
-        if(isSortingTypeEmpty){
-            return true;
-        }
-        if(isRenamingStyleEmpty){
-            return true;
-        }
-        else
+    public boolean comboBoxHasSelection(ComboBox<?> comboBox){
+        boolean isComboBoxEmpty = comboBox.getSelectionModel().isEmpty();
+        if(isComboBoxEmpty)
             return false;
+        else
+            return true;
     }
     public void initializeClearButton(){
         clearButton.setOnAction(actionEvent ->{
             outputTextArea.clear();
             pathTextField.clear();
+            runButton.setDisable(true);
                 });
 
     }
@@ -87,26 +82,20 @@ public class MainUIController implements Initializable {
     }
 
     private void initializeRunButton() {
-        //TODO: Make similar function to check if directory is empty, or make run button unclickable until directory is available
         runButton.setOnAction(actionEvent -> {
-            if(!selectionsEmptyOnRun(sortingTypeComboBox, renamingStyleComboBox)){
+            if((comboBoxHasSelection(sortingTypeComboBox) && comboBoxHasSelection(renamingStyleComboBox))){
                 selectSortingStyle();
-                if (Files.isDirectory(selectedDirectory)) {
-                    try {
-                        fileCollector.collectFromPath();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if(chooseRenamerStyle()){
-                        //TODO:Re-implement invalid characters for UI in TextFileRenamer
-                        fileRenamer.rename();
-                        outputTextArea.appendText(fileRenamer.getOutputText());
-                    }
+                try {
+                    fileCollector.collectFromPath();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                else{
-                    outputTextArea.appendText("Invalid directory provided '\n'");
+                if(chooseRenamerStyle()){
+                    fileRenamer.rename();
+                    outputTextArea.appendText(fileRenamer.getOutputText());
                 }
-            }
+            }else
+                outputTextArea.appendText("Please ensure a sorting and renaming style are selected.");
         });
     }
 
@@ -115,9 +104,16 @@ public class MainUIController implements Initializable {
             int startingNumber = Integer.parseInt(startingNumberTextField.getText());
             if(prefixText.getText() == null)
                 fileRenamer = new NumericalFileRenamer(fileCollector.getFullFilePath(), startingNumber);
-            else
-                fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
-                        startingNumber,prefixText.getText());
+            else{
+                try{
+                    fileRenamer = new TextFileRenamer(fileCollector.getFullFilePath(),
+                            startingNumber,prefixText.getText());
+                }catch(IllegalArgumentException illegalArgumentException){
+                    outputTextArea.appendText("Bad input given, please check prefix field \n");
+                    return false;
+                }
+            }
+
             return true;
         }catch(NumberFormatException numberFormatException){
             showErrorAlert("Integer not provided for 'Start With' field");
@@ -149,8 +145,14 @@ public class MainUIController implements Initializable {
         openButton.setOnAction(actionEvent -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Choose Directory");
-            selectedDirectory = directoryChooser.showDialog(openButton.getScene().getWindow()).toPath();
-            pathTextField.setText(selectedDirectory.toString());
+            File file = directoryChooser.showDialog(openButton.getScene().getWindow());
+            if(file == null || !file.isDirectory()){
+                runButton.setDisable(true);
+            }else{
+                selectedDirectory = file.toPath();
+                pathTextField.setText(selectedDirectory.toString());
+                runButton.setDisable(false);
+            }
         });
 
     }
