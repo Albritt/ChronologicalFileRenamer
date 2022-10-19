@@ -1,0 +1,4 @@
+--patch-module
+com.renamer=_
+--add-reads
+com.renamer=ALL-UNNAMED
