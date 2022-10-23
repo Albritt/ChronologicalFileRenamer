@@ -6,9 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="SequentialFileRenamer" />
+        <module name="DeepFileRenamer" />
         <module name="FileRenamer" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="SequentialFileRenamer" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
