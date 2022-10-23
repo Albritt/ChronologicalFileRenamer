@@ -1,6 +1,6 @@
 # DeepFileRenamer
 GUI tool for renaming all files in directory and sub-directories by user specified pattern in sorted or unsorted order.
-Run using JAVA 17, works on Linux/Mac/Windows
+Run using Java 17, works on Linux/Mac/Windows
 
 Download
 --------
