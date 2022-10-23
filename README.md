@@ -1,7 +1,8 @@
 # DeepFileRenamer
 GUI tool for renaming all files in directory and sub-directories by user specified pattern in sorted or unsorted order.
+Run using JAVA 17, works on Linux/Mac/Windows
 
 Download
 --------
 
-Download [the latest JAR](https://github.com/Albritt/FileRenamer/files/9846454/SequentialFileRenamer-1.0-SNAPSHOT.jar.zip) here or download package and run from terminal using `mvn package` 
+Download the latest JAR in releases or download source code (also in releases) and run from terminal using `mvn compile package` 
