@@ -5,4 +5,4 @@ Run using Java 17, works on Linux/Mac/Windows
 Download
 --------
 
-Download the latest JAR in releases or download source code (also in releases) and run from terminal using `mvn compile package` 
+Download the latest JAR in releases or download source code (also in releases) and run from terminal using `mvn javafx:run` after compiling. 
